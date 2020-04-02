@@ -32,14 +32,12 @@ class Garmpa:
         self._create_widgets()
 
         self.render()
-        #self.update()
 
     def render(self):
+        self.canvas.delete("all")
+
         for line in self.pattern.lines:
             self.canvas.create_line(*line)
-
-    def update(self):
-        self.master.after(1000, self.update)
 
     def _create_widgets(self):
         # Option to change between inches and centimetres
@@ -138,32 +136,58 @@ class Garmpa:
 
     def _update_canvas_width(self, event):
         width = self._convert(
-            value=event.widget.get(),
+            value=float(event.widget.get()),
             from_=self.panel.options["unit"].get(),
             to="pixels"
         )
 
-        self._update_entry("canvas_width", width)
+        self._update_entry(
+            "canvas_width",
+            self._convert(
+                value=width,
+                from_="pixels",
+                to=self.panel.options["unit"].get()
+            )
+        )
+
         self.canvas.config(width=width)
+
+        self.pattern.set_boundaries(max_width=width)
 
         self.render()
 
     def _update_canvas_height(self, event):
         height = self._convert(
-            value=event.widget.get(),
+            value=float(event.widget.get()),
             from_=self.panel.options["unit"].get(),
             to="pixels"
         )
 
-        self._update_entry("canvas_height", height)
+        self._update_entry(
+            "canvas_height",
+            self._convert(
+                value=height,
+                from_="pixels",
+                to=self.panel.options["unit"].get()
+            )
+        )
+
         self.canvas.config(height=height)
+
+        self.pattern.set_boundaries(max_height=height)
 
         self.render()
 
     def _update_scale(self, event):
         scale = event.widget
 
-        self.pattern.set(scale.label.lower(), scale.get())
+        key = scale.config()["label"][-1].lower()
+        value = self._convert(
+            value=float(scale.get()),
+            from_=self.panel.options["unit"].get(),
+            to="pixels"
+        )
+        self.pattern.set(**{key: value})
 
         self.render()
 

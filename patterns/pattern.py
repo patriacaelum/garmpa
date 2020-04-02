@@ -29,6 +29,8 @@ class Pattern:
 
             self.data[key] = val
 
+        self.lines = self._create_lines()
+
     def min(self, key):
         return self.min_vals.get(key)
 

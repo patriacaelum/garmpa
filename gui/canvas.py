@@ -10,7 +10,7 @@ class Canvas(tk.Canvas):
         self.args = args
         self.kwargs = kwargs
 
-    def config(**kwargs):
+    def config(self, **kwargs):
         self.kwargs.update(kwargs)
 
         super().config(**kwargs)

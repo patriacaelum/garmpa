@@ -1,3 +1,5 @@
+import numpy as np
+
 from .pattern import Pattern
 
 
@@ -24,6 +26,11 @@ class Sleeve(Pattern):
         if max_width is not None:
             width = int(max_width)
 
+            if width % 2 != 0:
+                raise ValueError(
+                    "Maximum canvas width should be a multiple of 2"
+                )
+
             self.max_vals.update({
                 "variance": width,
                 "shoulder": width,
@@ -34,6 +41,11 @@ class Sleeve(Pattern):
 
         if max_height is not None:
             height = int(max_height)
+
+            if height % 2 != 0:
+                raise ValueError(
+                    "Maximum canvas height should be a multiple of 2"
+                )
 
             self.max_vals.update({
                 "arm": height,
@@ -47,10 +59,27 @@ class Sleeve(Pattern):
         width = self.max("shoulder")
         height = self.max("arm")
 
+        variance = self.get("variance")
+        shoulder = self.get("shoulder")
         arm = self.get("arm")
         bicep = self.get("bicep")
         gap = self.get("gap")
         wrist = self.get("wrist")
+
+        shoulderx = np.arange(
+            start=-shoulder // 2,
+            stop=shoulder // 2 + 1,
+        )
+        normal = np.exp(- 0.5 * np.power(shoulderx / variance, 2))
+        normal = normal - np.min(normal)
+        shouldery = - gap * normal / np.max(normal)
+
+        shoulder_line = list(range(0, len(shoulderx) * 2))
+        for i in range(len(normal)):
+            shoulder_line[i * 2] = int(shoulderx[i]) + width / 2
+            shoulder_line[i * 2 + 1] = int(
+                shouldery[i] + (height - arm) / 2 + gap
+            )
 
         lines = [
             # Centre Arm
@@ -68,6 +97,8 @@ class Sleeve(Pattern):
                 (width + bicep) / 2, (height - arm) / 2 + gap,
                 (width + wrist) / 2, (height + arm) / 2
             ],
+            # Shoulder
+            shoulder_line,
             # Bicep
             [
                 (width - bicep) / 2, (height - arm) / 2 + gap,
