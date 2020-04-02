@@ -39,11 +39,6 @@ class Garmpa:
             self.canvas.create_line(*line)
 
     def update(self):
-        update = self.panel.update()
-
-        if update:
-            self.render()
-
         self.master.after(1000, self.update)
 
     def _create_widgets(self):
@@ -78,7 +73,11 @@ class Garmpa:
         for key, value in self.pattern.items():
             self.panel.add_scale(
                 key,
-                value,
+                self._convert(
+                    value=value,
+                    from_="pixels",
+                    to="inches"
+                ),
                 self._update_scale,
                 from_=self._convert(
                     value=self.pattern.min(key),
@@ -95,7 +94,7 @@ class Garmpa:
             )
 
     def _update_units(self, event):
-        unit = event.widget.get()
+        unit = str(event)
 
         # Update canvas size entries
         self._update_entry(

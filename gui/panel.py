@@ -38,8 +38,7 @@ class Panel:
         option = tk.StringVar()
         option.set(args[0])
 
-        menu = tk.OptionMenu(self.frame, option, *args, **kwargs)
-        menu.bind("<ButtonRelease-1>", bind)
+        menu = tk.OptionMenu(self.frame, option, *args, **kwargs, command=bind)
         menu.grid(row=self.rows)
 
         self.options[key] = option
