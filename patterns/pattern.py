@@ -15,19 +15,18 @@ class Pattern:
     def get(self, key):
         return self.data.get(key)
 
-    def set(self, **kwargs):
-        for key, value in kwargs.items():
-            val = int(value)
+    def set(self, key, value):
+        val = int(value)
 
-            if key not in self.data.keys():
-                raise ValueError(f"'{key}' key does not exist")
+        if key not in self.data.keys():
+            raise ValueError(f"'{key}' key does not exist")
 
-            if val < self.min(key) or val > self.max(key):
-                raise ValueError(
-                    f"'{value}' value is not within range for '{key}' key"
-                )
+        if val < self.min(key) or val > self.max(key):
+            raise ValueError(
+                f"'{value}' value is not within range for '{key}' key"
+            )
 
-            self.data[key] = val
+        self.data[key] = val
 
         self.lines = self._create_lines()
 

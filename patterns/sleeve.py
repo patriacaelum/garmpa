@@ -22,6 +22,13 @@ class Sleeve(Pattern):
 
         self.set_boundaries(max_width, max_height)
 
+    def set(self, key, value):
+        if key in ["shoulder", "bicep"]:
+            super().set("shoulder", value)
+            super().set("bicep", value)
+        else:
+            super().set(key, value)
+
     def set_boundaries(self, max_width=None, max_height=None):
         if max_width is not None:
             width = int(max_width)
@@ -49,7 +56,7 @@ class Sleeve(Pattern):
 
             self.max_vals.update({
                 "arm": height,
-                "gap": height - 5
+                "gap": height // 2
             })
 
         self._assert_values()

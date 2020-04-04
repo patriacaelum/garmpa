@@ -87,8 +87,11 @@ class Garmpa:
                     from_="pixels",
                     to="inches"
                 ),
+                digits=3,
                 label=key.title(),
-                orient=tk.HORIZONTAL
+                orient=tk.HORIZONTAL,
+                length=150,
+                resolution=0.1
             )
 
     def _update_units(self, event):
@@ -181,13 +184,24 @@ class Garmpa:
     def _update_scale(self, event):
         scale = event.widget
 
-        key = scale.config()["label"][-1].lower()
-        value = self._convert(
-            value=float(scale.get()),
-            from_=self.panel.options["unit"].get(),
-            to="pixels"
+        self.pattern.set(
+            scale.config()["label"][-1].lower(),
+            self._convert(
+                value=float(scale.get()),
+                from_=self.panel.options["unit"].get(),
+                to="pixels"
+            )
         )
-        self.pattern.set(**{key: value})
+
+        # Update related scales
+        for key, value in self.pattern.items():
+            self.panel.scales[key].set(
+                self._convert(
+                    value=value,
+                    from_="pixels",
+                    to=self.panel.options["unit"].get()
+                )
+            )
 
         self.render()
 
@@ -217,14 +231,14 @@ class Garmpa:
             if to_pixel:
                 conversion = int(value)
             elif to_inch:
-                conversion = round(value / 72, 1)
+                conversion = round(value / 72.0, 1)
             elif to_cm:
                 conversion = round(value * 2.54 / 72, 1)
             else:
                 raise NotImplementedError(f"Unit '{to}' is not defined")
         elif from_inch:
             if to_pixel:
-                conversion = int(value * 72)
+                conversion = int(value * 72.0)
             elif to_inch:
                 conversion = round(value, 1)
             elif to_cm:
