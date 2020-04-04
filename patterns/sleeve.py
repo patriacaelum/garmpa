@@ -4,6 +4,11 @@ from .pattern import Pattern
 
 
 class Sleeve(Pattern):
+    """A simple long-sleeve pattern.
+
+    max_width: (int) the maximum possible width measurement, in pixels.
+    max_height: (int) the maximum possible height measurement, in pixels.
+    """
     def __init__(self, max_width, max_height):
         super().__init__()
 
@@ -23,6 +28,13 @@ class Sleeve(Pattern):
         self.set_boundaries(max_width, max_height)
 
     def set(self, key, value):
+        """Sets the measurement for the given key, in pixels.
+
+        The "shoulder" and "bicep" keys are linked together.
+
+        key: (str)
+        value: (int)
+        """
         if key in ["shoulder", "bicep"]:
             super().set("shoulder", value)
             super().set("bicep", value)
@@ -30,6 +42,14 @@ class Sleeve(Pattern):
             super().set(key, value)
 
     def set_boundaries(self, max_width=None, max_height=None):
+        """Sets the minimum and maximum possible values for each key.
+
+        max_width: (int) the maximum possible width, in pixels. This affects the
+                   variance, shoulder line, bicep line, elbow line, and wrist
+                   line.
+        max_height: (int) the maximum possible height, in pixels. This affects
+                    the arm lines and the gap height.
+        """
         if max_width is not None:
             width = int(max_width)
 
@@ -59,10 +79,15 @@ class Sleeve(Pattern):
                 "gap": height // 2
             })
 
-        self._assert_values()
-        self.lines = self._create_lines()
+        super().set_boundaries()
 
     def _create_lines(self):
+        """Creates the lines to draw the sleeve pattern.
+
+        returns: (list) a list of lists, where each list is alternating x and y
+                 corrdinates which define the vertices which are connected by
+                 lines.
+        """
         width = self.max("shoulder")
         height = self.max("arm")
 
