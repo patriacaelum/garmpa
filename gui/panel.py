@@ -1,5 +1,7 @@
 import tkinter as tk
 
+from .scale import Scale
+
 
 class Panel:
     def __init__(self, *args, **kwargs):
@@ -39,6 +41,7 @@ class Panel:
         option.set(args[0])
 
         menu = tk.OptionMenu(self.frame, option, *args, **kwargs, command=bind)
+        menu.config(width=14)
         menu.grid(row=self.rows)
 
         self.options[key] = option
@@ -46,7 +49,7 @@ class Panel:
     def add_scale(self, key, value, bind, *args, **kwargs):
         self.rows += 1
 
-        scale = tk.Scale(self.frame, *args, **kwargs)
+        scale = Scale(self.frame, *args, **kwargs)
         scale.set(value)
         scale.bind("<ButtonRelease-1>", bind)
         scale.grid(row=self.rows)

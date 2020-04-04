@@ -185,7 +185,7 @@ class Garmpa:
         scale = event.widget
 
         self.pattern.set(
-            scale.config()["label"][-1].lower(),
+            scale.label.lower(),
             self._convert(
                 value=float(scale.get()),
                 from_=self.panel.options["unit"].get(),
